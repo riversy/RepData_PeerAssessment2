@@ -1,6 +1,6 @@
 ---
 title: "Analisys of most harmful weather events in USA according to data of NOAA Storm Database"
-author: "[Igor Goltsov](mailto:riversy@gmail.com)"
+author: "[Igor Goltsov](mailto: riversy@gmail.com)"
 date: "June 20, 2015"
 output: html_document
 keep_md: true
@@ -8,7 +8,7 @@ keep_md: true
 
 ## Synopsis
 
-TODO: Prepare synopsis about completed research...
+The analisys of the Storm Database provided by [NOAA][1] shown, that tornados are most harmful with respect to population health. In the other hand, the most valuable economical consequencies are provided by floods.
 
 ## Data Processing
 
@@ -16,7 +16,7 @@ The data for anaylis is provided by [NOAA][1]. The data about any storm events m
 
 ### Download package
 
-I will check if *repdata_Fdata_FStormData.csv.bz2* file exists in my *data* folder and download the package from link shown below if it didn't.
+Check if *repdata_Fdata_FStormData.csv.bz2* file exists in *data* folder and download the package from link shown below if it didn't.
 
 ```{r download_data_package,results='hide'}
 package.name <- "data/repdata_Fdata_FStormData.csv.bz2"
@@ -27,7 +27,7 @@ if (!file.exists(package.name)){
 }    
 ```
 
-So now we can load it into the variable *storm.data* now and prepare it for further analisys. 
+Can load data into the variable *storm.data* and prepare it for further analisys. 
 
 ```{r load_data, cache=TRUE}
 storm.data <- read.csv(bzfile(package.name))

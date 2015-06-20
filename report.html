@@ -63,28 +63,28 @@ img {
 
 <div id="header">
 <h1 class="title">Analisys of most harmful weather events in USA according to data of NOAA Storm Database</h1>
-<h4 class="author"><em><a href="mailto:riversy@gmail.com">Igor Goltsov</a></em></h4>
+<h4 class="author"><em><a href="mailto:%20riversy@gmail.com">Igor Goltsov</a></em></h4>
 <h4 class="date"><em>June 20, 2015</em></h4>
 </div>
 
 
 <div id="synopsis" class="section level2">
 <h2>Synopsis</h2>
-<p>TODO: Prepare synopsis about completed research…</p>
+<p>The analisys of the Storm Database provided by <a href="http://www.ncdc.noaa.gov/stormevents/">NOAA</a> shown, that tornados are most harmful with respect to population health. In the other hand, the most valuable economical consequencies are provided by floods.</p>
 </div>
 <div id="data-processing" class="section level2">
 <h2>Data Processing</h2>
 <p>The data for anaylis is provided by <a href="http://www.ncdc.noaa.gov/stormevents/">NOAA</a>. The data about any storm events may be found there. But I will use the <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2">package</a> that provided by Coursera <a href="https://class.coursera.org/repdata-015">Reproducible Research</a> course.</p>
 <div id="download-package" class="section level3">
 <h3>Download package</h3>
-<p>I will check if <em>repdata_Fdata_FStormData.csv.bz2</em> file exists in my <em>data</em> folder and download the package from link shown below if it didn’t.</p>
+<p>Check if <em>repdata_Fdata_FStormData.csv.bz2</em> file exists in <em>data</em> folder and download the package from link shown below if it didn’t.</p>
 <pre class="r"><code>package.name &lt;- &quot;data/repdata_Fdata_FStormData.csv.bz2&quot;
 package.url &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2&quot;
 
 if (!file.exists(package.name)){
     download.file(package.url, package.name, method=&quot;curl&quot;)
 }    </code></pre>
-<p>So now we can load it into the variable <em>storm.data</em> now and prepare it for further analisys.</p>
+<p>Can load data into the variable <em>storm.data</em> and prepare it for further analisys.</p>
 <pre class="r"><code>storm.data &lt;- read.csv(bzfile(package.name))
 dim(storm.data)</code></pre>
 <pre><code>## [1] 902297     37</code></pre>
