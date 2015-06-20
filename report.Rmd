@@ -1,0 +1,139 @@
+---
+title: "Analisys of most harmful weather events in USA according to data of NOAA Storm Database"
+author: "[Igor Goltsov](mailto:riversy@gmail.com)"
+date: "June 20, 2015"
+output: html_document
+keep_md: true
+---
+
+## Synopsis
+
+TODO: Prepare synopsis about completed research...
+
+## Data Processing
+
+The data for anaylis is provided by [NOAA][1]. The data about any storm events may be found there. But I will use the [package][2] that provided by Coursera [Reproducible Research][3] course. 
+
+### Download package
+
+I will check if *repdata_Fdata_FStormData.csv.bz2* file exists in my *data* folder and download the package from link shown below if it didn't.
+
+```{r download_data_package,results='hide'}
+package.name <- "data/repdata_Fdata_FStormData.csv.bz2"
+package.url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+
+if (!file.exists(package.name)){
+    download.file(package.url, package.name, method="curl")
+}    
+```
+
+So now we can load it into the variable *storm.data* now and prepare it for further analisys. 
+
+```{r load_data, cache=TRUE}
+storm.data <- read.csv(bzfile(package.name))
+dim(storm.data)
+head(storm.data)
+```
+
+### Data Processing
+
+Property and Crop Damage values should be arranged into one unit of measure
+
+Function **arrange_unit_of_measure(value, exp)** will arrange value of damage for property and crop.
+
+```{r, results='hide'}
+arrange_unit_of_measure <- function(value, exp){
+    value <- as.numeric(value)
+    
+    if (exp %in% c("k","K")){
+        exp <- 3
+    }
+    
+    if (exp %in% c("m","M")){
+        exp <- 6
+    }
+    
+    if (exp %in% c("b","B")){
+        exp <- 9
+    }
+    
+    if (is.numeric(value) && is.numeric(exp)){
+        value*10^exp
+    } else {
+        NA
+    }
+}
+```
+
+Use **apply()** to arrange units of measure for property damages.
+
+```{r clarify_property_damage, cache=TRUE}
+arranged.prop.damage <- as.numeric(
+  apply(storm.data, 1, function(x) { 
+    prop.dmg <- as.numeric(x[25])
+    prop.dmg.exp <- x[26] 
+    
+    arrange_unit_of_measure(prop.dmg, prop.dmg.exp)
+  })
+)
+summary(arranged.prop.damage)
+```
+
+Use **apply()** to arrange units of measure for property damages.
+
+```{r clarify_crop_damage, cache=TRUE}
+arranged.crop.damage <- as.numeric(
+  apply(storm.data, 1, function(x) { 
+    crop.dmg <- as.numeric(x[27])
+    crop.dmg.exp <- x[28] 
+    
+    arrange_unit_of_measure(crop.dmg, crop.dmg.exp)
+  })
+)
+summary(arranged.crop.damage)
+```
+
+Squeeze the data required for my analisys only.
+
+```{r squeeze_necessary_data}
+library(dplyr)
+analysis.data <- select(
+    storm.data,
+    EVTYPE,
+    FATALITIES,
+    INJURIES
+)
+
+analysis.data$PROPERTY.DAMAGE <- arranged.prop.damage
+analysis.data$CROP.DAMAGE <- arranged.crop.damage
+
+names(analysis.data) <- c(
+    "EVENT.TYPE",
+    "FATALITIES",
+    "INJURIES",
+    "PROPERTY.DAMAGE",
+    "CROP.DAMAGE"    
+)
+
+str(analysis.data)
+```
+
+Now the data is clean and ready for analisys. 
+
+## Results
+
+The most harmfull for population weather events could be identified by quantity of Injuries and Fatalities presented in the *analysis.data* variable. 
+
+### Most harmful for population
+
+
+
+
+
+
+
+
+
+[1]:http://www.ncdc.noaa.gov/stormevents/
+[2]:https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2
+[3]:https://class.coursera.org/repdata-015
