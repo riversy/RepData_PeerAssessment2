@@ -3,3 +3,7 @@
 .RData
 *.Rproj
 /rsconnect/
+/report_cache/
+data/repdata_Fdata_FStormData.csv.bz2
+.~*
+*~
