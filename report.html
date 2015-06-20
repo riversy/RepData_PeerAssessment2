@@ -247,7 +247,7 @@ print(quantiles)</code></pre>
 
 print(limit_harm)</code></pre>
 <pre><code>## [1] 92</code></pre>
-<p>It looks like all types of event with popiulation harm greatest then 92 people are most harmful. Build the top of most harmful to population events. The events what cvalified as most harmful are called by name and all other events are called as “OTHER EVENTS”.</p>
+<p>It looks like all types of event with popiulation harm greatest then 92 people are most harmful. Build the top of most harmful to population events. The events what qualified as most harmful are called by name and all other events are called as “OTHER EVENTS”.</p>
 <pre class="r"><code>most_harmful_events &lt;- select(population_harm, event_type, harm) %&gt;%
                     filter(harm &gt;= limit_harm) %&gt;% 
                     arrange(desc(harm))
@@ -495,7 +495,7 @@ print(quantiles)</code></pre>
 
 print(limit_damage)</code></pre>
 <pre><code>## [1] 13.1</code></pre>
-<p>It looks like all types of event with damage greatest then 13.1 millions of dollars are most harmful to economics. Build the top of events with greatest economic consequencies. The events what cvalified as most damagable are called by name and all other events are called as “OTHER EVENTS”.</p>
+<p>It looks like all types of event with damage greatest then 13.1 millions of dollars are most harmful to economics. Build the top of events with greatest economic consequencies. The events what qualified as most damagable are called by name and all other events are called as “OTHER EVENTS”.</p>
 <pre class="r"><code>most_damagable_events &lt;- select(economical_damage, event_type, damage) %&gt;%
                     filter(damage &gt;= limit_damage) %&gt;% 
                     mutate(damage = damage / 10^3) %&gt;%
