@@ -60,7 +60,7 @@ arrange_unit_of_measure <- function(value, exp){
     if (is.numeric(value) && is.numeric(exp)){
         value*10^exp
     } else {
-        NA
+        0
     }
 }
 ```
@@ -95,43 +95,160 @@ summary(arranged.crop.damage)
 
 Squeeze the data required for my analisys only.
 
-```{r squeeze_necessary_data}
+```{r squeeze_necessary_data, cache=TRUE}
 library(dplyr)
-analysis.data <- select(
+analisys.data <- select(
     storm.data,
     EVTYPE,
     FATALITIES,
     INJURIES
 )
 
-analysis.data$PROPERTY.DAMAGE <- arranged.prop.damage
-analysis.data$CROP.DAMAGE <- arranged.crop.damage
+analisys.data$PROPERTY.DAMAGE <- arranged.prop.damage
+analisys.data$CROP.DAMAGE <- arranged.crop.damage
 
-names(analysis.data) <- c(
-    "EVENT.TYPE",
-    "FATALITIES",
-    "INJURIES",
-    "PROPERTY.DAMAGE",
-    "CROP.DAMAGE"    
+names(analisys.data) <- c(
+    "event_type",
+    "fatalities",
+    "injuries",
+    "property_damage",
+    "crop_damage"    
 )
 
-str(analysis.data)
+str(analisys.data)
 ```
 
 Now the data is clean and ready for analisys. 
 
 ## Results
 
-The most harmfull for population weather events could be identified by quantity of Injuries and Fatalities presented in the *analysis.data* variable. 
+The most harmfull for population weather events could be identified by quantity of Injuries and Fatalities presented in the *analisys.data* variable. 
 
-### Most harmful for population
+### Events most harmful with respect to population
+
+The most harmful types of event are 20% of events with greatest population harm values.
+
+```{r calculate_population_harm}
+library(dplyr)
+population_harm <- select(analisys.data, event_type, fatalities, injuries) %>% 
+                    group_by(event_type) %>% 
+                    summarise(harm = sum(fatalities + injuries))
+
+quantiles <- quantile(
+    population_harm[population_harm$harm > 0, ]$harm,
+    probs = seq(0 , 1, 0.20)
+)
+
+print(quantiles)
+
+limit_harm <- quantiles[[5]]
+
+print(limit_harm)
+```
+
+It looks like all types of event with popiulation harm greatest then `r limit_harm` people are most harmful. Build the top of most harmful to population events. The events what cvalified as most harmful are called by name and all other events are called as "OTHER EVENTS". 
+
+```{r fig.height=9, fig.width=8}
+most_harmful_events <- select(population_harm, event_type, harm) %>%
+                    filter(harm >= limit_harm) %>% 
+                    arrange(desc(harm))
+
+less_harmful_events <- select(population_harm, event_type, harm) %>%
+                    filter(harm < limit_harm)
+
+summary_of_harm <- rbind(
+    most_harmful_events, 
+    data.frame(
+        event_type = "OTHER EVENTS",
+        harm = sum(less_harmful_events$harm)
+    )
+)
+
+# Print plot what illustrates most harmful events 
+
+library(ggplot2)
+ggplot(
+        summary_of_harm[1:10, ], 
+        aes(x="", fill=event_type, y=harm / 10^3)
+    ) + 
+    geom_bar(width=1, stat = "identity") +
+    guides(fill=guide_legend(ncol=2)) +
+    ggtitle("TOP 10 of most harmful events\nwith respect to population health") +
+    xlab("") +
+    ylab("Thousands of people affected") 
+```
+
+#### Complete list of weather events that most harmful to population 
+
+```{r}
+library(knitr)
+names(summary_of_harm) <- c("Event Type", "People harmed")
+kable(summary_of_harm, digits=2)
+```
+
+### Events that has the greatest economic consequences
+
+Events that has the greatest economical consequences are 20% of events with greatest economical damage values.
+
+```{r calculate_economical_damage}
+library(dplyr)
+economical_damage <- select(analisys.data, event_type, property_damage, crop_damage) %>% 
+                    group_by(event_type) %>% 
+                    summarise(damage = sum( (property_damage + crop_damage) / 10^6 ))
+
+quantiles <- quantile(
+    economical_damage[economical_damage$damage > 0, ]$damage,
+    probs = seq(0 , 1, 0.20)
+)
+
+print(quantiles)
+
+limit_damage <- quantiles[[5]]
+
+print(limit_damage)
+```
+
+It looks like all types of event with damage greatest then `r limit_damage` millions of dollars are most harmful to economics. Build the top of events with greatest economic consequencies. The events what cvalified as most damagable are called by name and all other events are called as "OTHER EVENTS". 
+
+```{r fig.height=9, fig.width=8}
+most_damagable_events <- select(economical_damage, event_type, damage) %>%
+                    filter(damage >= limit_damage) %>% 
+                    mutate(damage = damage / 10^3) %>%
+                    arrange(desc(damage))
+
+less_damagable_events <- select(economical_damage, event_type, damage) %>%
+                    filter(damage < limit_damage) %>%                
+                    mutate(damage = damage / 10^3)
+                    
+
+summary_of_economical_damage <- rbind(
+    most_damagable_events, 
+    data.frame(
+        event_type = "OTHER EVENTS",
+        damage = sum(less_damagable_events$damage)
+    )
+)
+
+library(ggplot2)
+ggplot(
+        summary_of_economical_damage[1:10, ], 
+        aes(x="", fill=event_type, y=damage)
+    ) + 
+    geom_bar(width=1, stat = "identity") +
+    guides(fill=guide_legend(ncol=2)) +
+    ggtitle("TOP 10 of events that has\nthe greatest economical consequences") +
+    xlab("") +
+    ylab("Damage in billions of dollars") 
+```
 
 
+#### Complete list of weather events with greatest economical damage
 
-
-
-
-
+```{r}
+library(knitr)
+names(summary_of_economical_damage) <- c("Event Type", "Damage in billions of dollars")
+kable(summary_of_economical_damage, digits=2)
+```
 
 
 [1]:http://www.ncdc.noaa.gov/stormevents/
