@@ -172,7 +172,10 @@ ggplot(
         aes(x="", fill=event_type, y=harm / 10^3)
     ) + 
     geom_bar(width=1, stat = "identity") +
-    guides(fill=guide_legend(ncol=2)) +
+    guides(fill=guide_legend(
+        ncol=2,
+        title = "Type of Event"
+    )) +
     ggtitle("TOP 10 of most harmful events\nwith respect to population health") +
     xlab("") +
     ylab("Thousands of people affected") 
@@ -235,7 +238,10 @@ ggplot(
         aes(x="", fill=event_type, y=damage)
     ) + 
     geom_bar(width=1, stat = "identity") +
-    guides(fill=guide_legend(ncol=2)) +
+    guides(fill=guide_legend(
+        ncol=2,
+        title = "Type of Event"
+    )) +
     ggtitle("TOP 10 of events that has\nthe greatest economical consequences") +
     xlab("") +
     ylab("Damage in billions of dollars") 
