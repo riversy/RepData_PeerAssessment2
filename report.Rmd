@@ -12,7 +12,7 @@ The analisys of the Storm Database provided by [NOAA][1] shown, that tornados ar
 
 ## Data Processing
 
-The data for anaylis is provided by [NOAA][1]. The data about any storm events may be found there. But I will use the [package][2] that provided by Coursera [Reproducible Research][3] course. 
+The data for anaylis is provided by [NOAA][1]. The data about any storm events may be found there. Will use the [package][2] that provided by Coursera [Reproducible Research][3] course. 
 
 ### Download package
 
@@ -93,7 +93,7 @@ arranged.crop.damage <- as.numeric(
 summary(arranged.crop.damage)
 ```
 
-Squeeze the data required for my analisys only.
+Squeeze the data required for the analisys only.
 
 ```{r squeeze_necessary_data, cache=TRUE}
 library(dplyr)
